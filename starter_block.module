@@ -1,0 +1,33 @@
+<?php
+/**
+ * @file
+ * Code for the Starter: Block feature.
+ */
+
+include_once 'starter_block.features.inc';
+
+/**
+ * Implements hook_menu_alter().
+ */
+function starter_site_building_ui_menu_alter(&$items) {
+  $items['admin/structure/block/add']['access callback'] = FALSE;
+  //$items['admin/structure/block']['access callback'] = FALSE;
+}
+
+/**
+ * Process variables for block.tpl.php.
+ */
+function starter_block_process_block(&$variables) {
+  if ($variables['block']->module == 'bean') {
+    $entity_type = 'bean';
+    $item = reset($variables['elements']['bean']);
+    $entity = $item['#entity'];
+
+    list(, , $bundle) = entity_extract_ids($entity_type, $entity);
+    $instance = title_field_replacement_get_label_field($entity_type, $bundle);
+
+    if (!empty($instance['settings']['hide_label']['entity'])) {
+      $variables['block']->subject = FALSE;
+    }
+  }
+}
