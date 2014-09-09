@@ -11,14 +11,13 @@ include_once 'starter_block.features.inc';
  */
 function starter_site_building_ui_menu_alter(&$items) {
   $items['admin/structure/block/add']['access callback'] = FALSE;
-  //$items['admin/structure/block']['access callback'] = FALSE;
 }
 
 /**
  * Process variables for block.tpl.php.
  */
 function starter_block_process_block(&$variables) {
-  if ($variables['block']->module == 'bean') {
+  if ($variables['block']->module == 'bean' && !empty($variables['elements']['bean'])) {
     $entity_type = 'bean';
     $item = reset($variables['elements']['bean']);
     $entity = $item['#entity'];
@@ -29,5 +28,16 @@ function starter_block_process_block(&$variables) {
     if (!empty($instance['settings']['hide_label']['entity'])) {
       $variables['block']->subject = FALSE;
     }
+  }
+}
+
+/**
+ * Process variables for page.tpl.php.
+ */
+function starter_block_process_page(&$variables) {
+  $entity = menu_get_object('bean_delta', 1);
+
+  if ($entity) {
+    title_field_replacement_hide_label('bean', $entity, $variables, TRUE);
   }
 }
